@@ -1,0 +1,482 @@
+新手在学习Linux时可能会碰到网卡配置问题（连不上网），可以将网卡配置文件中的IP地址、子网掩码得个信息注释后追加参数BRIDGE=virbr0（设置网卡为桥接模式），情况可能与你的文件目录有所不同：
+vim /etc/sysconfig/network-scripts/ifcfg-enps03
+DEVICE=“enps03”
+ONBOOT=“yes”
+
+重要的守护进程（Daemon），通常会随系统启动时激活并随系统关闭时停止，一直在系统后台中默默为用户提供服务：
+crond 		计划任务
+dhcpd 		动态IP地址分配服务（DHCP）
+httpd		网站服务
+lpd		打印服务器
+named		域名解析服务（DNS）
+nfs		文件共享服务（NFS）
+smb		文件共享与打印服务（SAMBA）
+syslog		系统日志
+gpm		鼠标进程
+
+红帽软件包管理器（RPM，Redhat Package Manager）:
+安装软件：rpm -ivh filename.rpm
+升级软件：rpm -Uvh filename.rpm
+卸载软件：rpm -e filename.rpm
+查询软件的描述信息：rpm -qpi filename.rpm
+列出软件的文件信息：rpm -qpl filename.rpm
+查询文件属于哪个RPM：rpm -qf filename
+
+Yum软件仓库
+Yum仓库则是为进一步简化RPM管理软件难度而设计的，Yum能够根据用户的要求分析出所需软件包机器相关依赖关系，自动从服务器下载软件包并安装到系统。
+yum repolist all		列出所有仓库
+yum list all 			列出仓库中所有软件包
+yum info 软件包名称		查看软件包信息
+yum install 软件包名称		安装软件包
+yum reinstall 软件包名称		重新安装软件包
+yum update 软件包名称		升级软件包
+yum remove 软件包		移除软件包
+yum clean alla			清除所有仓库缓存
+yum check-update		检查可更新的软件包
+yum grouplist			查看系统中已安装的软件包组
+yum groupinstall 软件包组	安装指定的软件包组
+yum groupremove 软件包组		移除指定的软件包组
+yum groupinfo	软件包组		查询指定的软件包组信息
+
+设置系统默认时间：
+date -s “20160616 10:20:00”
+按固定格式显示时间：
+date ”+%Y-%m-%d %H:%M:%S”
+
+wget命令用于私用命令行下载网络文件，格式为：“wget [参数] 下载地址”，参数说明：
+-b	后台下载模式
+-O	下载到指定目录
+-t	最大尝试次数
+-c	断点续传
+-p	下载页面内所有资源，包括图片、视频等
+-r	递归下载
+
+uname命令用于查看系统内核版本等信息，格式为：uname [-a]
+
+history命令用于显示历史执行过的命令，格式为：history [-c]
+
+mkdir -p 连续创建多层目录（若文件夹已存在则忽略）
+
+useradd命令用于创建新的用户，格式为：useradd[选项] 用户名
+-d	指定用户的家目录（默认为/home/username）
+-D	展示默认值
+-e	账号有效截止日期，格式：YYYY-MM-DD
+-g	指定一个厨师用户组（必须已存在）
+-G	指定一个或多个扩展用户组
+-N	不创建于用户同名的用户组
+-s	指定默认的Shell
+-u	指定用户的UID
+
+显示用户信息
+id quranjie
+
+passwd命令用于修改用户的密码
+-l 	锁定用户禁止其登陆
+-u	接触锁定，允许用户登陆
+—stdin	允许从标准输入修改用户名，如（echo “NewPassWord” | passwd -stdin Username）
+-d	使账号无密码
+-e	强制用户下次登陆时修改密码
+-S	显示用户的密码状态
+
+打包压缩文件命令tar
+-c	创建压缩文件
+-x	解开压缩文件
+-t	查看压缩包内有哪些文件
+-z	用gzip压缩或解压
+-j	用bzip2压缩或解压
+-v	显示压缩或解压的过程
+-f	目标文件名
+-p	保留原始的权限与属性
+-P	使用绝对路径来压缩
+-C	指定解压到的目录
+
+文件查询搜索命令grep
+-b	将可执行文件当做文本文件来搜索
+-c	仅显示找到的次数
+-i	忽略大小写
+-n	显示行号
+-v	反向选择——仅列出没有关键词的行
+
+查找文件命令find，格式：find[查找路径] 寻找条件 操作
+-name		匹配名称
+-perm		匹配权限（mode为完全匹配， -mode为包含即可）
+-user		匹配所有者
+-group		匹配所有组
+-mtime -n +n	匹配修改内容的时间
+-atime -n +n	匹配访问文件的时间-n指n天以内，+n指n天以前
+-ctime -n +n	匹配修改权限的时间-n指n天以内，+n指n天以前
+-nouser		匹配无所有者的文件
+-nogroup	匹配无所有组的文件
+-newer f1 !f2	匹配比文件f1新却比f2旧的文件
+—-type b/d/c/p/l/f	匹配文件类型（块设备、目录、字符设备、管道、链接文件、文件文件）
+—size		匹配文件的大小（+50k查找超过50k的文件，而-50k则代表查找小于50k的文件）
+-prune		忽略某个目录
+—exec {}\;	后面可接对搜索到结果进一步处理的命令
+重点是“—exec {}\;”，其中{}代表find命令搜索出的文件，记住结尾必须是\;
+找出用户linuxprobe的文件并复制到/root/findresults目录：
+find / -user linuxprobe -exec cp -arf {} /root/findresults/ \;
+
+光用命令本身并不能做好工作，当学习完管道命令符、输入输出重定向、通配符以及环境变量后便可以将命令组合的更加恰当高效率。
+
+管道命令符|，作用是将前一个命令的标准输出当做后一个命令的标准输入，格式为“命令A|命令B”
+如使用非交互式设置用户密码，将root的密码修改为linuxprobe：
+echo “linuxprobe” | passed —stdin root
+
+对于输出重定向符有这些情况：
+命令 > 文件		将标准输出重定向到一个文件（清空原有文件的数据）
+命令 2> 文件		将错误输出重定向到一个文件（清空原有文件的数据）
+命令 >> 文件		将标准输出重定向到一个文件（追加到原有内容的后面）
+命令 2>> 文件		将错误输出重定向到一个文件（追加到原有内容的后面）
+命令 >> 文件 2>$1	将标准输出与错误输出共同写入到文件（追加到原有内容的后面）
+
+对于输入重定向有这些情况：
+命令 < 文件		将文件作为命令的标准输入
+命令 << 分界符		从标准输入中读取，知道遇见“分界符”才停止
+命令 < 文件1 > 文件2	将文件1作为命令的标准输入并将标准输出到文件2
+
+bash解释器支持很多的特殊字符扩展：
+\（反斜杠）	转移后面单个字符
+‘’（单引号）	转移所有的字符
+“”（双引号）	变量依然生效
+``(反引号)	执行命令语句
+
+实用的PATH变量
+alias命令用于设置命令的别名，格式为：“alias 别名=命令”
+例如设置cp命令的别名：alias cp=“cp -i”
+取消cp命令的别名：unalias cp
+
+配置主机名称，红帽系统的主机名称保存在/etc/hostname文件中
+
+shell的工作形式分为两种：
+交互式（interactive）：用户输入一条命令，shell解释并执行一条。
+批处理（batch）：用户实现编写一个shell脚本，其中包含诸多命令，shell会一次执行完所有命令。
+一个完整的shell脚本应包括“脚本声明”、“注释信息”和“可执行语句”。
+脚本声明（#！）：告知系统用何种shell来解释。
+注释信息（#）：对可执行语句或程序功能做介绍，可以不写。
+可执行语句：执行的具体命令。
+
+执行脚本有3种方法：
+脚本文件路径：./example.sh
+sh脚本文件路径：sh example.sh
+source脚本文件路径：source example.sh
+
+脚本接收用户参数，有一些已经被定义好的shell预定义变量：
+$0			当前执行shell脚本的程序名
+$1-9，${10},${11},…	参数的位置变量
+$#			一共有多少个参数
+$*			所有位置变量的值
+$?			判断上一条命令是否执行成功，0为成功，非0为失败
+
+判断用户的参数，如mkdir命令，当目录不存在则创建，已存在则报错
+测试语句格式：[ 条件表达式 ]（两边均有一个空格）
+细分测试语句有：文件测试、逻辑测试、整数值比较、字符串比较。
+文件测试：[ 操作符 文件或目录名 ]
+-d	测试是否为目录
+-e	测试文件或目录是否存在
+-f	判断是否为文件
+-r	测试当前用户是否有权限读取
+-w	测试当前用户是否有权限写入
+-x	测试当前用户是否有权限执行
+
+条件测试语句
+if then fi
+双分支结构：if then else fi
+多分支结构：if then else elif fi
+for条件语句，会先读取多个不同的变量值，然后逐一执行同一组命令。
+for 变量名 in 取值列表
+do
+	命令序列
+done
+
+计划任务，分为一次性和长期性计划任务。
+先来讲一次性任务，它是由atd服务/进程来实现的，计划的管理操作是“at”命令，具体的可用参数如下：
+at <时间>	安排一次性任务
+atq或at -l	查看任务列表
+at -c 序号	预览任务与设置环境
+atrm 序号	删除任务
+
+一般用at命令创建计划任务有交互式与非交互式，交互式的方法（输完后敲击Ctrl+d来保存退出）：
+echo “hello” | at 23:30
+对于创建长期可循环的计划任务，则要用到cron服务啦，使用方法：
+创建、编辑计划任务：crontab -e [-u 用户名]
+查看计划任务：crontab -l [-u 用户名]
+删除计划任务：crontab -r [-u 用户名]
+	
+其中在创建、编辑计划任务时有个固定的格式，请一定要记住。
+	分钟 小时 日期 月份 星期	命令
+分钟	0-59之间的整数
+小时	0-23之间的整数
+日期	1-31之间的整数
+月份	1-12之间的整数
+星期	0-7之间的整数（0与7均为星期日）
+
+例如，每周1、3、5的凌晨3点25分将/home/wwwroot目录打包备份为backup.tar.gz
+25 3 * * 1，3，5 /usr/bin/tar -czvf backup.tar.gz /home/wwwroot
+
+用户身份与能力
+root用户拥有极高的系统所有权，能够管理系统的各项功能，如添加/删除用户，启动/关闭进程，开启/禁用硬件设备等权限。其实root只是个名字，真正让他成为超级用户的是UID值。
+超级用户UID 0
+系统用户UID 1-999：系统中系统服务由不同用户运行，更加安全，默认被限制登录系统。
+普通用户UID 1000+：及管理员创建的用于日常工作而不能管理系统的普通用户。
+
+账户名称与UID保存在/etc/passwd文件中，而账户密码则保存在/etc/shadow文件中。
+
+文件的特殊权限
+SUID：让执行者临时拥有属主的权限（仅对拥有执行权限的二进制程序有效），比如所有用户都可以执行用于修改用户密码的passwd命令，但用户密码保存在/etc/shadow文件中，默认权限是000，即除了超级用户root外的所有用户都没有查看或编辑改文件的权限，所以对passwd命令加上SUID权限位，则可让普通用户临时获得程序所有者的身份，即以root用户的身份将变更的密码信息写入到shadow文件中。
+SGID：让直行这临时拥有属组的权限（对拥有直行权限的二进制程序设置）
+
+chmod命令用于修改文件或目录的权限，格式为：chmod [参数] 权限 文件或目录名称
+chown命令用于修改文件或目录的所属主与所属组，格式为：chown [参数] 所属主：所属组 文件或目录名称
+
+SBIT（Sticky Bit）：只可管理自己的数据而不能删除他人文件（仅对目录有效）
+如drwxrwxrwt. 17 root root 4096 Feb 11 13:01.
+最后的t就是代表的粘滞位。
+
+文件的隐藏属性，chattr命令用于设置文件的隐藏权限，格式为：chattr [参数] 文件
+i	将无法对文件进行修改，若对目录设置后则仅能修改子文件而不能新建或删除。
+a	仅允许补充（追加）内容，无法覆盖/删除（append only）
+S	文件内容变更后立即同步到硬盘（sync）
+s	彻底从硬盘中删除，不可恢复（用0填充文件所在硬盘区域）
+A	不再修改这个文件的最后访问时间（atime）
+b	不再修改文件或目录的存取时间
+D	检查压缩文件中的错误
+d	当使用dump命令备份时忽略本文件/目录
+c	默认将文件或目录进行压缩
+u	当删除此文件后依然保留其在硬盘中的数据，方便日后恢复。
+t	让文件系统支持尾部合并（tail-merging）
+X	可以直接访问压缩文件的内容
+
+lsattr命令用于显示文件的隐藏权限，格式为：lsattr [参数] 文件
+a	显示所有文件和目录
+l	显示隐藏属性的全称（默认简写成一个字母）
+R	递归处理，将指定目录下的所有文件及子目录一并处理
+d	若目标文件为目录，请加此参数
+
+su命令用于变更使用者的身份，及切换登陆者，格式为：su [-] 用户名
+sudo命令用于给普通用户提供额外权利来完成原本超级用户才能完成的任务，格式为：sudo [参数] 命令名称
+
+文件访问控制列表
+上面讲解的rwx权限、特殊权限、隐藏权限都是对某一类用户设置的，如果希望对某个指定的用户进行单独的权限设置，那么久需要用文件的访问控制列表来实现。
+我们可以基于普通文件或目录设置进行设置ACL，通俗来说ACL就是设置指定的特定用户或用户组队某个文件的操作权限。并且如果对某个目录设置了访问控制策略，那么子文件则继承其访问策略，而若对文件设置了访问控制策略则不再继承上级目录的控制策略。
+setfacl命令用于增加或者修改ACL规则，格式为：setfacl [参数] 文件
+-R	递归（对目录使用）
+-m	设置文件的acl规则
+-b	删除acl规则
+getfacl命令用于显示文件的ACL规则，格式为：getfacl 文件
+如给linuxprobe用户设置读取root家目录文件的权限：
+setfacl -Rm u:linuxprobe:rwx /root
+
+Iptables与Firewalld防火墙
+防火墙虽然有软件或硬件之分，但主要功能还是一句策略对外部请求进行过滤，成为公网与内网之间的保护屏障，防火墙会监控每一个数据包并判断是否有想要的匹配策略规则，知道满足其中一条策略规则为止，而防火墙规则策略可以使基于来源地址、请求动作或协议来定制的，最终仅让合法的用户请求流入到内网中，其余的均被丢弃。
+
+iptables命令用于创建数据过滤与NAT规则，主流的linux系统都默认启用iptables命令，但其参数较多且规则策略相对比较复杂。
+iptables命令用于管理防火墙的规则策略，格式为：iptables [-t 表名] 选项 [链名] [条件] [-j 控制类型]
+-P	设置默认策略：iptables -P INPUT(DROP|ACCEPT)
+-F	清空规则链
+-L	查看规则链
+-A	在规则链的末尾加入新规则
+-I num	在规则链的头部加入新规则
+-D num	删除某一条规则
+-s	匹配来源地址IP/MASK，加叹号！表示除这个IP外
+-d	匹配目标地址
+-i 网卡名称	匹配从这块网卡流入的数据
+-o 网卡名称	匹配从这块网卡流出的数据
+-p	匹配协议，如tcp,ump,icmp
+- - dport num	匹配目标端口号
+- - sport num	匹配来源端口号
+
+查看已有的规则
+iptables -L
+清空已有的规则
+iptables -F
+将INPUT链的默认策略设置为拒绝
+iptables -P INPUT DROP
+允许所有的ping操作
+iptables -I INPUT -p icmp -j ACCEPT
+在INPUT链的末尾加入一条规则，允许所有未被其他规则匹配上的数据包：
+因为默认规则表就是filter，所以其中的“-t filter”一般省略不写，效果一样。
+iptables -t filter -A INPUT -j ACCEPT
+删除上面的那条规则
+iptables -D INPUT 2
+仅允许来自于192.168.10.0/24域的用户连接本机的ssh服务。
+防火墙会按照顺序匹配规则，请一定要保证“允许”规则是在“拒绝”规则的上面。
+iptables -I INPUT -s 192.168.10.0/24 -p tcp —dport 22 -j ACCEPT
+iptables -A INPUT -p tcp —sport 22 -j REJECT
+不允许任何用户访问本机的12345端口
+iptables -I INPUT -p tcp —dport 12345 -j REJECT
+iptables -I INPUT -p udp —dport 12345 -j REJECT
+拒绝其他用户从“eno1617”网卡访问本机http服务的数据包
+iptables -I INPUT -i eno1617 -p tcp —dport 80 -j REJECT
+禁止用户访问www.my133.org
+iptables -I FORWARD -d www.my133.org -j DROP
+禁止IP地址为192.168.10.10的用户上网
+iptables -I FORWARD -s 192.168.10.10 -j DROP
+iptables命令执行后的规则策略仅当前生效，若想重启后依然保存规则需执行“service iptabls save”
+
+使用SSH服务管理远程主机
+systemctl设置服务的开机启动、不启动、查看各级别下服务启动状态的命令：
+systemctl enable foo.service		开机自动启动
+systemctl disable foo.service		开机不自动启动
+systemctl is-enabled foo.service	查看特定服务是否为开机自启动
+systemctl list-unit-files —type=service	查看各个级别下服务的启动与禁用情况
+
+LINUX系统中时刻运行着许多的进程，如果能够合理的管理他们，绝对有益于系统的性能优化，系统进程总共有5种不同的状态：
+R	运行：正在运行或在运行队列中等待。
+S	中断：休眠中，在等待某个条件的形成或接受到信号。
+D	不可中断：收到信号不唤醒和不可运行，进程必须等待互道有中断发生。
+Z	僵死：进程已终止，但进程描述符存在，知道父进程调用wait4()系统调用后释放。
+T	停止：进程收到SIGSTOP，SIGSTP,SIGTIN,SIGTOU信号后停止运行。
+
+ps命令用于查看系统中的进程状态，格式为“ps [参数]”
+如查看进程与状态“ps -aux”
+查找某个特定的进程信息“ps -aux | grep 进程名”
+USER		PID		%CPU		%MEM		VSZ		 RSS
+进程的所有者	进程ID号		运算器占用率	内容占用率	虚拟内存使用量（KB）占用的固定内存量
+TTY		STAT		START		TIME		COMMAND
+所在终端		进程状态		被启动的时间	实际使用CPU的时间	命令名称与参数
+-a	显示所有的进程（包括其他用户的）
+-u	用户以及其他详细信息
+-x	显示没有控制终端的进程
+
+top命令用于监视进程的活动与系统负载，格式为“top”，这个top太厉害了，完全相当于“强化班的Windows任务管理器”
+pidof命令用于查询某个特定程序的进程PID值，格式为“pidof [参数] [程序名称]”，
+如查询sshd进程的PID值：pidof sshd
+kill明勇用于种植某个特定PID号码的进程，格式为“kill [参数] [进程PID号]”，
+如强制终止PID为4674的进程“kill -9 4674”，其中9为强制终止
+killall命令用于终止某个特定名称的所有进程，格式为：“kill [参数] [进程名称]”
+jobs命令可以查看到所有在后台运行着的进程
+有些命令在执行时会不断的在终端上输出信息，影响到我们继续输入命令了，此时便可以在这条命令后面添加个”&”符号，那么从一开始执行该命令就会是在后台执行。
+
+ss命令用于查看本机的端口连接状态：
+-a	显示所有的套接字
+-l	显示所有连接状态的套接字
+-e	显示详细的套接字信息
+-m	显示套接字的内存使用情况
+-p	显示套接字的进程信息
+-4	显示ipv4的套接字信息
+-6	显示ipv6的套接字信息
+-t	仅显示tcp的套接字信息
+-u	仅显示udp的套接字信息
+-n	不解析主机名（提高速度）
+-s	查看概述
+
+远程控制服务SSH（Secure Shell）是永红能够提供安全远程登录会话的协议，假如希望在远程Linux系统中执行命令，就是通过了这个协议。
+sshd服务提供两种安全验证的方法：
+基于口令的安全验证：经过验证账号与密码即可登录到远程主机。
+基于密钥的安全验证：需要在本地生成“密钥对”后将公钥传送至服务端，进行公共密钥的比较。
+在远程主机上启动sshd服务并加入到开机启动项：
+systemctl start sshd
+systemctl enable sshd
+
+ssh命令用于远程管理linux主机，格式为：“ssh [参数] 主机”
+-p	指定连接端口（默认为22）
+-v	显示连接过程的详细信息
+
+远程传输命令，要想将一些文件通过网络传送给其他主机，又恰好两台主机都是linux系统，我们便可以直接用scp命令传输文件到另外一台主机。
+scp命令用于在网络中安全的传输文件，格式为“scp [参数] 本地文件 远程账户@远程IP地址：远程目录”
+-v	显示详细的连接进度
+-P	指定远程主机的sshd端口号
+-r	传送文件夹时请加此参数
+-6	使用ipv6协议
+
+不间断会话服务，当连接的终端被关闭时，运行在服务器上的命令也会中断。如果有长时间文件备份或FTP传输等任务，通常都会新开一个连接窗口再继续工作，并且中途不能关闭窗口或断开连接，否则任务会被中断，还要重新开始。screen便是为了解决上述问题而设计的。其特点有：
+会话恢复：即便网络中断，也可让会话随时恢复，用户不会失去对命令行的控制。
+多窗口：每隔会话都是独立运行的，拥有独立的编号、输入输出和窗口缓存。
+会话共享：可以使多个用户从不同中断使用同一个会话，也可让他们看到完全相同的输出。
+-A		让所有视窗自动调整适应当前终端机的大小。
+-d<会话名称>	将制定的screen会话离线。
+-r<会话名称>	将制定的screen会话恢复。
+-h<行数>		指定视窗的缓冲区行数。
+-S<会话名称>	指定screen会话的名称
+-x		恢复所有离线的会话
+-ls或-list	显示当前的screen会话
+—wipe		自动将无法使用的screen会话删除。
+
+源码安装的流程：
+1、解压文件，源码包通常会使用tar工具归档然后用gunzip或bzip2进行压缩，后缀分别为.tar.gz与tar.bz2，解压方法：
+tar czvf FileName.tar.gz
+tar jxvf FileName.tar.bz2
+2、切换到解压后的目录：cd FileDirectory
+3、准备编译工作
+在开始安装服务程序之前，需要执行configure脚本，他会自动的对当前系统进行一系列的评估，如源文件、软件依赖性库、
+编译器、汇编器、连接器检查等等，如果有需求，还可以使用-prefix参数来指定程序的安装路径（很实用），而当脚本检查
+系统环境负荷要求后，会在当前目录下生成一个Makefile文件。
+./configure -prefix=/usr/local/program
+4、生成安装程序
+刚刚生成的Makfile文件会保存有系统环境依赖关系和安装规则，接下来需要实用make命令来根据Makefile文件提供的规则
+实用何时的SHELL来编译所有依赖的源码，然后make命令会生成一个最终可执行的安装程序。
+make
+5、安装程序
+如果在configure脚本阶段中没有实用-prefix参数，那么程序一般会被默认安装到/usr/local/bin目录中。
+make install
+6、清理临时文件（可选）
+make clean
+卸载服务程序的命令（请不要随便执行！！！）
+make uninstall
+
+shell脚本实现检测文件是否被修改过的代码
+#!/bin/bash
+funmd5_1() {
+	find /root/passwd -type f | xargs md5sum > /tmp/funmd5_1.log
+}
+funmd5_2() {
+	find /root/passwd -type f | xargs md5sum > /tmp/funmd5_2.log
+}
+
+if [ ! -f /tmp/funmd5_1.log ];then
+	funmd5_1
+fi
+
+funmd5_2
+diff /tmp/funmd5_1.log /tmp/funmd5_2.log > /tmp/diff.log
+Status=$?
+if [ $Status = 0 ];then
+	exit
+else
+	echo "文件修改过了!"
+fi
+
+
+////////////////  git常用命令  //////////////////////////
+git init here 		—创建本地仓库（repository），将会在文件下创建一个.git文件夹，.git文件夹里存储了所有的版本信息、标记等内容
+git remote add origin git@github.com:winter1991/hello.git
+			—把本地仓库和远程仓库关联起来。如果不执行这个命令的话，每次push的时候都需要制定远程服务器的地址
+git add	/ rm		—从本地仓库增删，结果将会保存到本机的缓存里面
+git commit -m “注释”	—提交，把本机缓存中的内容提交到本机的HEAD里面
+git push origin master	—把本地的commit（提交）push到远程服务器上，origin也就是之前git remote add origin那个命令里面的origin，origin替代了服务器仓库地址：git push git@github.com:winter1991/hello.git
+git pull origin master	—从远程服务器pull拉取新的改动
+git status		—查看状态
+git add -A		—提交全部修改
+
+git配置：
+git config —global user.name “xxx”
+git config —global user.email “xxx”
+git config —list	查看配置列表
+
+配置 sshkey ： 上传代码时使用这个 sshkey 来确认是否有上传权限
+    1. 创建本地 ssh ： ssh-keygen -t rsa -C "Github 的注册邮箱"
+    2. 在 Github 中添加这个 sshkey ： 
+        复制  C:\Documents and Settings\Administrator\.ssh\id_rsa.pub 文件中的内容；
+        登录 Github --> Account Setting  --> SSH-KEY --> Add SSH-KEY --> 粘贴id_rsa.pub中的内容；
+    3. 验证： ssh -T git@github.com
+        出现 Hi xxx! You've successfully authenticated, but GitHub does not provide shell access. 说明配置成功，可以连接上 Github
+
+git rm xxx      -- 从本地仓库中删除指定文件
+git rm -r xxx   -- 从本地仓库中删除指定文件夹
+
+使用 .gitignore 文件忽略指定的内容：
+    1. 在本地仓库根目录创建 .gitignore 文件。Win7 下不能直接创建，可以创建 ".gitignore." 文件，后面的标点自动被忽略；
+    2. 过滤文件和文件夹： [Tt]emp/ 过滤 Temp\temp 文件夹； *.suo 过滤 .suo 文件；
+    3. 不过滤文件和文件夹： !*.c
+
+去掉linux下git push时输入账号密码：
+在~/目录下，touch创建文件.git-credentials,用vim编辑此文件，输入内容格式：
+vim .git-credentials
+输入内容：https://{username}:{password}@github.com
+比如https://ranjie:34567qu@github.com
+在终端下执行：git config —global credential.helper store
+可以看到~/.gitconfig文件，会多了一项：
+[credential]
+helper=store
+这时候就不需要输入密码了
+
