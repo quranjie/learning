@@ -565,6 +565,10 @@ vim .git-credentials
 helper=store
 这时候就不需要输入密码了
 
+我曾经遇到过的问题：
+在MAC上无法连上github，提示unknown host，我是这么解决的：
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
+sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
 
 ////////////////////////////////////////////////////////
 
